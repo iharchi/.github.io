@@ -8,94 +8,86 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "1",
+      "id": "webhook-node",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
-      "position": [
-        240,
-        300
-      ]
+      "position": [250, 300],
+      "webhookId": "real-estate-lead"
     },
     {
       "parameters": {
         "conditions": {
           "string": [
             {
-              "value1": "={{$json.guideType}}",
+              "value1": "={{ $json.guideType }}",
               "operation": "isNotEmpty"
             },
             {
-              "value1": "={{$json.email}}",
+              "value1": "={{ $json.email }}",
               "operation": "isNotEmpty"
             },
             {
-              "value1": "={{$json.name}}",
+              "value1": "={{ $json.name }}",
               "operation": "isNotEmpty"
             }
           ]
         }
       },
-      "id": "2",
+      "id": "validate-node",
       "name": "Validate",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [
-        460,
-        300
-      ]
+      "position": [450, 300]
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "a1",
+              "id": "firstName",
               "name": "firstName",
-              "value": "={{$json.name.split(' ')[0]}}",
+              "value": "={{ $json.name.split(' ')[0] }}",
               "type": "string"
             },
             {
-              "id": "a2",
+              "id": "lastName",
               "name": "lastName",
-              "value": "={{$json.name.split(' ').slice(1).join(' ')}}",
+              "value": "={{ $json.name.split(' ').slice(1).join(' ') }}",
               "type": "string"
             },
             {
-              "id": "a3",
+              "id": "email",
               "name": "email",
-              "value": "={{$json.email}}",
+              "value": "={{ $json.email }}",
               "type": "string"
             },
             {
-              "id": "a4",
+              "id": "phone",
               "name": "phone",
-              "value": "={{$json.phone}}",
+              "value": "={{ $json.phone }}",
               "type": "string"
             },
             {
-              "id": "a5",
+              "id": "guideType",
               "name": "guideType",
-              "value": "={{$json.guideType}}",
+              "value": "={{ $json.guideType }}",
               "type": "string"
             },
             {
-              "id": "a6",
+              "id": "timestamp",
               "name": "timestamp",
-              "value": "={{$now.toISO()}}",
+              "value": "={{ $now.toISO() }}",
               "type": "string"
             }
           ]
         }
       },
-      "id": "3",
-      "name": "Format",
+      "id": "format-node",
+      "name": "Format Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [
-        680,
-        200
-      ]
+      "position": [650, 200]
     },
     {
       "parameters": {
@@ -105,59 +97,53 @@
           "value": "1763dbb742",
           "mode": "id"
         },
-        "email": "={{$json.email}}",
+        "email": "={{ $json.email }}",
         "status": "subscribed",
         "updateFields": {
           "mergeFieldsUi": {
             "mergeFieldValues": [
               {
                 "name": "FNAME",
-                "value": "={{$json.firstName}}"
+                "value": "={{ $json.firstName }}"
               },
               {
                 "name": "LNAME",
-                "value": "={{$json.lastName}}"
+                "value": "={{ $json.lastName }}"
               },
               {
                 "name": "PHONE",
-                "value": "={{$json.phone}}"
+                "value": "={{ $json.phone }}"
               }
             ]
           }
         }
       },
-      "id": "4",
+      "id": "mailchimp-node",
       "name": "Mailchimp",
       "type": "n8n-nodes-base.mailchimp",
       "typeVersion": 2,
-      "position": [
-        900,
-        80
-      ]
+      "position": [850, 100]
     },
     {
       "parameters": {
         "fromEmail": "harchi.isaak@gmail.com",
-        "toEmail": "={{$json.email}}",
-        "subject": "Welcome! Your {{$json.guideType.charAt(0).toUpperCase() + $json.guideType.slice(1)}} Guide",
+        "toEmail": "={{ $json.email }}",
+        "subject": "Welcome! Your {{ $json.guideType.charAt(0).toUpperCase() + $json.guideType.slice(1) }} Guide",
         "emailType": "html",
-        "message": "<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }\n    .container { max-width: 600px; margin: 0 auto; }\n    .header { background: linear-gradient(135deg, #1e3a5f 0%, #0d1f3c 100%); color: white; padding: 40px 20px; text-align: center; }\n    .content { background: #ffffff; padding: 40px 30px; }\n    .button { display: inline-block; padding: 15px 35px; background: #d4af37; color: white !important; text-decoration: none; border-radius: 5px; margin: 25px 0; font-weight: bold; }\n    .footer { background: #f8f9fa; padding: 30px 20px; text-align: center; font-size: 13px; color: #666; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\"><h1>Welcome, {{$json.firstName}}!</h1></div>\n    <div class=\"content\">\n      <p>Hi {{$json.firstName}},</p>\n      <p>Thank you for requesting the <strong>{{$json.guideType.charAt(0).toUpperCase() + $json.guideType.slice(1)}} Guide</strong>!</p>\n      <div style=\"text-align: center;\"><a href=\"https://iharchi.github.io/{{$json.guideType}}_guide.pdf\" class=\"button\">📥 Download Your Guide</a></div>\n      <p>📞 Call/Text: (612) 800-2025<br>📧 Email: harchi.isaak@gmail.com</p>\n      <p>Looking forward to helping you!</p>\n      <p>Warmly,<br><strong>Isaak Harchi</strong></p>\n    </div>\n    <div class=\"footer\"><p>© 2025 Isaak Harchi Real Estate</p></div>\n  </div>\n</body>\n</html>"
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }\n    .container { max-width: 600px; margin: 0 auto; }\n    .header { background: linear-gradient(135deg, #1e3a5f 0%, #0d1f3c 100%); color: white; padding: 40px 20px; text-align: center; }\n    .content { background: #ffffff; padding: 40px 30px; }\n    .button { display: inline-block; padding: 15px 35px; background: #d4af37; color: white !important; text-decoration: none; border-radius: 5px; margin: 25px 0; font-weight: bold; }\n    .footer { background: #f8f9fa; padding: 30px 20px; text-align: center; font-size: 13px; color: #666; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\"><h1>Welcome, {{ $json.firstName }}!</h1></div>\n    <div class=\"content\">\n      <p>Hi {{ $json.firstName }},</p>\n      <p>Thank you for requesting the <strong>{{ $json.guideType.charAt(0).toUpperCase() + $json.guideType.slice(1) }} Guide</strong>!</p>\n      <div style=\"text-align: center;\"><a href=\"https://iharchi.github.io/{{ $json.guideType }}_guide.pdf\" class=\"button\">📥 Download Your Guide</a></div>\n      <p>📞 Call/Text: (612) 800-2025<br>📧 Email: harchi.isaak@gmail.com</p>\n      <p>Looking forward to helping you!</p>\n      <p>Warmly,<br><strong>Isaak Harchi</strong></p>\n    </div>\n    <div class=\"footer\"><p>© 2025 Isaak Harchi Real Estate</p></div>\n  </div>\n</body>\n</html>"
       },
-      "id": "5",
+      "id": "email-node",
       "name": "Send Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
-      "position": [
-        900,
-        300
-      ]
+      "position": [850, 250]
     },
     {
       "parameters": {
         "operation": "appendOrUpdate",
         "documentId": {
           "__rl": true,
-          "value": "YOUR_SHEET_ID",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "id"
         },
         "sheetName": {
@@ -168,55 +154,48 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "Timestamp": "={{$json.timestamp}}",
-            "First Name": "={{$json.firstName}}",
-            "Last Name": "={{$json.lastName}}",
-            "Email": "={{$json.email}}",
-            "Phone": "={{$json.phone}}",
-            "Guide": "={{$json.guideType}}",
-            "Status": "New"
+            "Timestamp": "={{ $json.timestamp }}",
+            "First Name": "={{ $json.firstName }}",
+            "Last Name": "={{ $json.lastName }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Guide Type": "={{ $json.guideType }}",
+            "Status": "New Lead"
           }
-        }
+        },
+        "options": {}
       },
-      "id": "6",
+      "id": "sheets-node",
       "name": "Google Sheets",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [
-        900,
-        520
-      ]
+      "position": [850, 400]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { \"success\": true, \"message\": \"Thank you!\", \"guideType\": $json.guideType } }}"
+        "responseBody": "={{ { \"success\": true, \"message\": \"Thank you! Check your email for the guide.\", \"guideType\": $json.guideType } }}",
+        "options": {}
       },
-      "id": "7",
-      "name": "Success",
+      "id": "success-node",
+      "name": "Success Response",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [
-        1120,
-        300
-      ]
+      "position": [1050, 250]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { \"success\": false, \"error\": \"Invalid data\" } }}",
+        "responseBody": "={{ { \"success\": false, \"error\": \"Missing required fields. Please fill out all fields.\" } }}",
         "options": {
           "responseCode": 400
         }
       },
-      "id": "8",
-      "name": "Error",
+      "id": "error-node",
+      "name": "Error Response",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [
-        680,
-        420
-      ]
+      "position": [650, 450]
     }
   ],
   "connections": {
@@ -235,21 +214,21 @@
       "main": [
         [
           {
-            "node": "Format",
+            "node": "Format Data",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Error",
+            "node": "Error Response",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Format": {
+    "Format Data": {
       "main": [
         [
           {
@@ -274,7 +253,7 @@
       "main": [
         [
           {
-            "node": "Success",
+            "node": "Success Response",
             "type": "main",
             "index": 0
           }
@@ -285,7 +264,7 @@
       "main": [
         [
           {
-            "node": "Success",
+            "node": "Success Response",
             "type": "main",
             "index": 0
           }
@@ -296,7 +275,7 @@
       "main": [
         [
           {
-            "node": "Success",
+            "node": "Success Response",
             "type": "main",
             "index": 0
           }
@@ -304,8 +283,11 @@
       ]
     }
   },
-  "settings": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
   "staticData": null,
   "tags": [],
-  "pinData": {}
+  "pinData": {},
+  "versionId": "1"
 }
